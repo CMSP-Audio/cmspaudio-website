@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CMSP123 — Harmonic Imager Plugin</title>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W92GJ283');</script>
+<!-- End Google Tag Manager -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Jost:wght@300;400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --plugin-bg:       #272C28;
+    --plugin-frame:    #5CE87A;
+    --plugin-text:     #5CE87A;
+    --plugin-text-dn:  #78F090;
+    --plugin-bevel-hi: #5A5F5C;
+    --plugin-bevel-lo: #161817;
+    --plugin-inner:    #464B48;
+    --green:      #5CE87A;
+    --green-glow: rgba(92,232,122,0.22);
+    --green-deep: #3fad58;
+    --bg:         #111412;
+    --bg-card:    #151815;
+    --text:       #8aab90;
+    --text-dim:   #3d5242;
+    --border:     #1e2620;
+    --max-w:      960px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Jost', sans-serif; font-weight: 300;
+    line-height: 1.7; overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none; z-index: 9999;
+  }
+  body::after {
+    content: ''; position: fixed; top: -180px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 460px;
+    background: radial-gradient(ellipse, rgba(92,232,122,0.09) 0%, transparent 68%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(17,20,18,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 0.22em; color: var(--text-dim); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--text-dim); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--green); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 100px 24px 80px; position: relative; z-index: 1;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(120px, 20vw, 240px);
+    letter-spacing: 0.04em; line-height: 0.85; color: var(--green);
+    text-shadow: 0 0 60px rgba(92,232,122,0.28), 0 0 120px rgba(92,232,122,0.08);
+    margin-bottom: 14px; opacity: 0; animation: fadeUp 0.8s ease 0.1s forwards;
+  }
+  .hero-sub {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    letter-spacing: 0.28em; color: var(--text-dim); text-transform: uppercase;
+    margin-bottom: 44px; opacity: 0; animation: fadeUp 0.7s ease 0.32s forwards;
+  }
+  .plugin-mockup {
+    width: min(400px, 88vw); background: var(--plugin-bg);
+    position: relative; margin-bottom: 36px;
+    opacity: 0; animation: fadeUp 0.7s ease 0.48s forwards;
+    box-shadow: 0 0 48px rgba(92,232,122,0.07);
+  }
+  .plugin-mockup::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px);
+    pointer-events: none; z-index: 2;
+  }
+  .plugin-mockup::after { content: ''; position: absolute; inset: 0; background: rgba(210,170,120,0.03); pointer-events: none; z-index: 3; }
+  .plugin-frame { margin: 6px; border: 1px solid var(--plugin-frame); padding: 14px; position: relative; z-index: 1; }
+  .plugin-modes { display: flex; gap: 10px; }
+  .mode-btn {
+    flex: 1; aspect-ratio: 1.1 / 1; display: flex; align-items: center; justify-content: center;
+    background: var(--plugin-bg); cursor: pointer; position: relative; user-select: none;
+    border-top: 1px solid #5A5F5C; border-left: 1px solid #5A5F5C;
+    border-bottom: 1px solid #161817; border-right: 1px solid #161817;
+    outline: 1px solid #464B48; outline-offset: -2px; transition: none;
+  }
+  .mode-btn span { font-family: Georgia, serif; font-size: 24px; color: var(--plugin-text); text-shadow: 0 0 10px rgba(92,232,122,0.35); position: relative; z-index: 1; }
+  .mode-btn.active { border-top: 1px solid #161817; border-left: 1px solid #161817; border-bottom: 1px solid #5A5F5C; border-right: 1px solid #5A5F5C; background: #1A2E1C; }
+  .mode-btn.active span { color: var(--plugin-text-dn); text-shadow: 0 0 12px rgba(92,232,122,0.5); }
+
+  .cta-block { display: flex; flex-direction: column; align-items: center; gap: 11px; opacity: 0; animation: fadeUp 0.7s ease 0.62s forwards; }
+  .price-row { display: flex; align-items: baseline; gap: 12px; }
+  .price-sale { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--green); letter-spacing: 0.04em; text-shadow: 0 0 18px var(--green-glow); }
+  .price-orig { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); text-decoration: line-through; opacity: 0.45; }
+  .btn-buy {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--bg); background: var(--green);
+    padding: 13px 38px; text-decoration: none; display: inline-block;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 0 22px var(--green-glow);
+  }
+  .btn-buy:hover { background: #7af09a; transform: translateY(-1px); box-shadow: 0 0 36px rgba(92,232,122,0.38); }
+  .formats-row { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+  .fmt { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: 0.16em; color: var(--text-dim); border: 1px solid var(--border); padding: 3px 8px; text-transform: uppercase; opacity: 0.55; }
+  .fine-print { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--text-dim); opacity: 0.3; text-transform: uppercase; }
+
+  .hero-quote { margin-top: 32px; opacity: 0; animation: fadeUp 0.7s ease 0.78s forwards; display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 480px; }
+  .hero-quote-text { font-family: 'Jost', sans-serif; font-size: 15px; font-style: italic; color: var(--text); letter-spacing: 0.02em; line-height: 1.65; }
+  .hero-quote-text::before { content: '\201C'; color: var(--green); margin-right: 3px; }
+  .hero-quote-text::after  { content: '\201D'; color: var(--green); margin-left: 3px; }
+  .hero-quote-attr { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--text-dim); opacity: 0.9; text-transform: uppercase; }
+
+  /* TRUST BAR */
+  .trust-bar {
+    width: 100%; background: var(--bg-card);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 18px 24px; display: flex; align-items: center; justify-content: center;
+    gap: 48px; flex-wrap: wrap; position: relative; z-index: 1;
+  }
+  .trust-item { display: flex; align-items: center; gap: 10px; }
+  .trust-icon { font-size: 14px; color: var(--green-deep); opacity: 0.7; }
+  .trust-text { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.16em; color: var(--text-dim); opacity: 0.7; text-transform: uppercase; }
+  .trust-sep { width: 1px; height: 18px; background: var(--border); }
+
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border) 25%, var(--border) 75%, transparent); }
+
+  section { max-width: var(--max-w); margin: 0 auto; padding: 72px 40px; position: relative; z-index: 1; }
+  .kicker { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.28em; color: var(--green-deep); text-transform: uppercase; margin-bottom: 10px; display: block; }
+  .headline { font-family: 'Bebas Neue', sans-serif; font-size: clamp(30px, 4vw, 46px); letter-spacing: 0.05em; color: var(--text); line-height: 1; margin-bottom: 36px; }
+
+  /* FEATURES */
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .feature-card { background: var(--bg-card); border: 1px solid var(--border); padding: 32px 28px; transition: border-color 0.2s, background 0.2s; }
+  .feature-card:hover { border-color: #2a4030; background: #181d18; }
+  .feature-icon { font-size: 28px; color: var(--green-deep); margin-bottom: 14px; display: block; line-height: 1; }
+  .feature-name { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--text); text-transform: uppercase; margin-bottom: 8px; display: block; }
+  .feature-body { font-size: 13px; color: var(--text-dim); line-height: 1.75; font-weight: 300; }
+
+  /* LOSS STRIP */
+  .loss-strip { max-width: var(--max-w); margin: 0 auto; padding: 0 40px 52px; position: relative; z-index: 1; }
+  .loss-inner { border: 1px solid var(--border); border-left: 2px solid var(--green-deep); background: var(--bg-card); padding: 22px 28px; display: flex; align-items: center; gap: 18px; }
+  .loss-icon { font-size: 18px; color: var(--green-deep); flex-shrink: 0; opacity: 0.7; }
+  .loss-text { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--text-dim); line-height: 1.8; text-transform: uppercase; }
+  .loss-text strong { color: var(--text); font-weight: 400; }
+
+  /* AUDIO DEMO */
+  #demo { max-width: var(--max-w); }
+  .demo-player { background: var(--plugin-bg); border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .demo-player::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.045) 1px, rgba(0,0,0,0.045) 2px); pointer-events: none; z-index: 2; }
+  .demo-player::after { content: ''; position: absolute; inset: 0; background: rgba(210,170,120,0.025); pointer-events: none; z-index: 3; }
+  .demo-inner { position: relative; z-index: 4; border: 1px solid var(--plugin-frame); margin: 6px; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .demo-header { display: flex; align-items: center; justify-content: space-between; }
+  .demo-title { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: var(--green); text-transform: uppercase; }
+  .demo-sources { display: flex; gap: 2px; }
+  .demo-src-btn {
+    flex: 1; padding: 8px 4px; text-align: center;
+    font-family: 'Share Tech Mono', monospace; font-size: 9px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-dim); background: var(--plugin-bg); cursor: pointer;
+    border-top: 1px solid #5A5F5C; border-left: 1px solid #5A5F5C;
+    border-bottom: 1px solid #161817; border-right: 1px solid #161817;
+    outline: 1px solid #464B48; outline-offset: -2px;
+    transition: none; user-select: none;
+  }
+  .demo-src-btn:hover { background: #1a221b; }
+  .demo-src-btn.active { border-top: 1px solid #161817; border-left: 1px solid #161817; border-bottom: 1px solid #5A5F5C; border-right: 1px solid #5A5F5C; background: #1A2E1C; color: var(--green); text-shadow: 0 0 8px rgba(92,232,122,0.35); }
+  .demo-mode-row { display: flex; align-items: center; gap: 6px; }
+  .demo-mode-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.18em; color: var(--text-dim); text-transform: uppercase; opacity: 0.7; margin-right: 4px; white-space: nowrap; }
+  .demo-mode-btns { display: flex; gap: 6px; }
+  .demo-mode-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 52px; height: 44px; background: var(--plugin-bg); cursor: pointer;
+    border-top: 1px solid #5A5F5C; border-left: 1px solid #5A5F5C;
+    border-bottom: 1px solid #161817; border-right: 1px solid #161817;
+    outline: 1px solid #464B48; outline-offset: -2px;
+    font-family: Georgia, serif; font-size: 15px;
+    color: var(--plugin-text); text-shadow: 0 0 8px rgba(92,232,122,0.25);
+    transition: none; user-select: none; flex-shrink: 0;
+  }
+  .demo-mode-btn.bypass { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--text-dim); text-shadow: none; }
+  .demo-mode-btn:hover { background: #1a221b; }
+  .demo-mode-btn.active { border-top: 1px solid #161817; border-left: 1px solid #161817; border-bottom: 1px solid #5A5F5C; border-right: 1px solid #5A5F5C; background: #1A2E1C; color: var(--plugin-text-dn); text-shadow: 0 0 12px rgba(92,232,122,0.5); }
+  .demo-mode-btn.bypass.active { color: var(--text-dim); text-shadow: none; background: #1a1f1a; }
+  .demo-waveform { height: 64px; position: relative; cursor: pointer; overflow: hidden; }
+  .demo-waveform canvas { width: 100%; height: 100%; display: block; }
+  .demo-progress-overlay { position: absolute; top: 0; left: 0; bottom: 0; width: 0%; background: rgba(92,232,122,0.06); border-right: 1px solid var(--green); pointer-events: none; }
+  .demo-controls { display: flex; align-items: center; gap: 16px; }
+  .demo-play { width: 36px; height: 36px; flex-shrink: 0; background: transparent; border-top: 1px solid #5A5F5C; border-left: 1px solid #5A5F5C; border-bottom: 1px solid #161817; border-right: 1px solid #161817; outline: 1px solid #464B48; outline-offset: -2px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .demo-play:hover { background: #1A2E1C; }
+  .demo-play svg { width: 12px; height: 12px; fill: var(--green); }
+  .demo-time { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); min-width: 84px; }
+  .demo-seek { flex: 1; height: 2px; background: var(--border); -webkit-appearance: none; appearance: none; cursor: pointer; outline: none; }
+  .demo-seek::-webkit-slider-thumb { -webkit-appearance: none; width: 8px; height: 12px; background: var(--green); border-radius: 0; cursor: pointer; box-shadow: 0 0 6px var(--green-glow); }
+  .demo-seek::-moz-range-thumb { width: 8px; height: 12px; background: var(--green); border-radius: 0; border: none; cursor: pointer; }
+  .demo-seek::-webkit-slider-runnable-track { background: var(--border); height: 2px; }
+
+  /* STORY */
+  #story { max-width: var(--max-w); }
+  .story-block { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: start; background: var(--bg-card); border: 1px solid var(--border); padding: 44px 40px; position: relative; overflow: hidden; }
+  .story-block::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 1px; background: linear-gradient(180deg, var(--green) 0%, transparent 100%); opacity: 0.2; }
+  .story-ident { display: flex; flex-direction: column; gap: 10px; padding-right: 20px; border-right: 1px solid var(--border); }
+  .story-org { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.06em; color: var(--green); line-height: 1; text-shadow: 0 0 18px rgba(92,232,122,0.18); text-decoration: none; transition: text-shadow 0.2s, color 0.2s; }
+  .story-org:hover { color: #7af09a; text-shadow: 0 0 28px rgba(92,232,122,0.35); }
+  .story-dept { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--text-dim); text-transform: uppercase; opacity: 0.6; line-height: 1.8; }
+  .story-divline { width: 28px; height: 1px; background: var(--green-deep); opacity: 0.4; margin: 4px 0; }
+  .story-body { display: flex; flex-direction: column; gap: 14px; }
+  .story-copy { font-size: 14px; color: var(--text); line-height: 1.85; font-weight: 300; }
+  .story-copy a { color: var(--green); text-decoration: none; border-bottom: 1px solid rgba(92,232,122,0.2); transition: border-color 0.2s; }
+  .story-copy a:hover { border-color: var(--green); }
+  .story-tag { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.18em; color: var(--text-dim); opacity: 0.4; text-transform: uppercase; }
+
+  /* REVIEWS */
+  #reviews { max-width: var(--max-w); }
+  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .review-card { background: var(--bg-card); border: 1px solid var(--border); padding: 28px 26px; display: flex; flex-direction: column; gap: 14px; transition: border-color 0.2s; }
+  .review-card:hover { border-color: #2a4030; }
+  .review-stars { display: flex; gap: 3px; }
+  .review-star { font-size: 10px; color: var(--green-deep); text-shadow: 0 0 6px rgba(63,173,88,0.3); }
+  .review-quote { font-size: 13px; color: var(--text); line-height: 1.8; font-weight: 300; font-style: italic; flex: 1; }
+  .review-quote::before { content: '\201C'; color: var(--green-deep); margin-right: 2px; }
+  .review-quote::after  { content: '\201D'; color: var(--green-deep); margin-left: 2px; }
+  .review-meta { display: flex; flex-direction: column; gap: 2px; }
+  .review-name { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--text); text-transform: uppercase; }
+  .review-role { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); opacity: 0.9; text-transform: uppercase; }
+
+  /* REQUIREMENTS */
+  #requirements { max-width: var(--max-w); }
+  .req-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .req-block { background: var(--bg-card); padding: 28px 26px; }
+  .req-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--green-deep); text-transform: uppercase; margin-bottom: 14px; display: block; }
+  .req-list { list-style: none; }
+  .req-list li { font-size: 13px; color: var(--text); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.025); display: flex; align-items: flex-start; gap: 8px; font-weight: 300; line-height: 1.5; }
+  .req-list li::before { content: '—'; color: var(--text-dim); font-family: 'Share Tech Mono', monospace; font-size: 9px; flex-shrink: 0; margin-top: 3px; }
+  .req-list li:last-child { border-bottom: none; }
+
+  /* FAQ */
+  #faq { max-width: var(--max-w); }
+  .faq-list { display: flex; flex-direction: column; gap: 1px; }
+  details { background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; transition: border-color 0.2s; }
+  details[open] { border-color: #243028; }
+  summary { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; cursor: pointer; list-style: none; font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: var(--text); text-transform: uppercase; user-select: none; transition: color 0.2s; }
+  summary::-webkit-details-marker { display: none; }
+  details[open] summary { color: var(--green); }
+  summary::after { content: '+'; font-size: 17px; color: var(--text-dim); transition: transform 0.2s; flex-shrink: 0; margin-left: 16px; }
+  details[open] summary::after { transform: rotate(45deg); }
+  .faq-answer { padding: 18px 24px 24px; font-size: 14px; color: var(--text); line-height: 1.8; font-weight: 300; border-top: 1px solid var(--border); }
+
+  /* BUY */
+  #buy { max-width: 100%; padding: 72px 24px 96px; display: flex; justify-content: center; position: relative; z-index: 1; }
+  .buy-card { max-width: 440px; width: 100%; background: var(--bg-card); border: 1px solid var(--border); padding: 48px 40px; display: flex; flex-direction: column; align-items: center; gap: 18px; position: relative; }
+  .buy-card::before { content: ''; position: absolute; top: -1px; left: 20%; right: 20%; height: 1px; background: var(--green); box-shadow: 0 0 10px var(--green-glow); }
+  .buy-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: var(--text-dim); text-transform: uppercase; }
+  .buy-price-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .buy-price { font-family: 'Bebas Neue', sans-serif; font-size: 60px; color: var(--green); text-shadow: 0 0 24px var(--green-glow); line-height: 1; letter-spacing: 0.04em; }
+  .buy-was { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim); text-decoration: line-through; opacity: 0.4; }
+  .buy-badge { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: var(--green-deep); border: 1px solid #1e3522; background: rgba(63,173,88,0.06); padding: 4px 12px; text-transform: uppercase; }
+  .buy-includes { list-style: none; width: 100%; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 6px 0; }
+  .buy-includes li { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--text-dim); padding: 7px 0; display: flex; align-items: center; gap: 10px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.02); }
+  .buy-includes li:last-child { border-bottom: none; }
+  .buy-includes li::before { content: '✓'; color: var(--green-deep); font-size: 10px; flex-shrink: 0; }
+  .buy-close { font-size: 13px; color: var(--text-dim); line-height: 1.8; font-weight: 300; text-align: center; font-style: italic; border-top: 1px solid var(--border); padding-top: 16px; width: 100%; }
+  .btn-buy-large { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--bg); background: var(--green); padding: 15px 0; text-decoration: none; width: 100%; text-align: center; display: block; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; box-shadow: 0 0 28px var(--green-glow); }
+  .btn-buy-large:hover { background: #7af09a; transform: translateY(-1px); box-shadow: 0 0 42px rgba(92,232,122,0.38); }
+  .buy-fine { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--text-dim); opacity: 0.28; text-transform: uppercase; text-align: center; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+  .footer-logo { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--text-dim); opacity: 0.5; }
+  .footer-copy { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--text-dim); opacity: 0.25; text-transform: uppercase; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.55s ease, transform 0.55s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 700px) {
+    nav { padding: 14px 20px; }
+    .nav-links { gap: 14px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .req-grid { grid-template-columns: 1fr; }
+    .story-block { grid-template-columns: 1fr; padding: 28px 24px; }
+    .story-ident { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 18px; }
+    footer { flex-direction: column; gap: 10px; text-align: center; }
+    .buy-card { padding: 32px 22px; }
+    .trust-bar { gap: 20px; }
+    .trust-sep { display: none; }
+    .demo-mode-btns { gap: 4px; }
+    .demo-mode-btn { width: 44px; height: 40px; font-size: 13px; }
+    .demo-src-btn { font-size: 8px; letter-spacing: 0.08em; padding: 8px 2px; }
+  }
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W92GJ283"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<nav>
+  <div class="nav-logo">CMSP123</div>
+  <ul class="nav-links">
+    <li><a href="#story">Origin</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a id="buy-btn-header" href="#buy">Buy</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <h1 class="hero-title">123</h1>
+  <p class="hero-sub">Controlled Harmonic Redistribution</p>
+  <div class="plugin-mockup">
+    <div class="plugin-frame">
+      <div class="plugin-modes" id="mockup-modes">
+        <button class="mode-btn active" onclick="setMode(0)"><span>I</span></button>
+        <button class="mode-btn" onclick="setMode(1)"><span>II</span></button>
+        <button class="mode-btn" onclick="setMode(2)"><span>III</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="cta-block">
+    <div class="price-row">
+      <span class="price-sale">$24.99</span>
+      <span class="price-orig">$123</span>
+    </div>
+    <a id="buy-btn-hero" href="https://buy.stripe.com/7sY6oG7VMaKQb71dlXc3m00" class="btn-buy" target="_blank">Purchase Now</a>
+    <div class="formats-row">
+      <span class="fmt">VST3</span><span class="fmt">AU</span><span class="fmt">AAX</span><span class="fmt">macOS</span><span class="fmt">iLok</span>
+    </div>
+    <span class="fine-print">No dongle required · Lifetime license</span>
+  </div>
+  <div class="hero-quote">
+    <span class="hero-quote-text">I II III is an ear-first harmonic tool built around instinct. Three modes. One hidden state. From controlled texture to complete destruction, every option is designed to be chosen by feel. I throw it on everything—click—then trust my ears.</span>
+    <span class="hero-quote-attr">— Alex Yake (Durand Bernarr, UnoTheActivist, Jordin Sparks)</span>
+  </div>
+</div>
+
+<div class="trust-bar">
+  <div class="trust-item"><span class="trust-icon">◼</span><span class="trust-text">VST3 · AU · AAX</span></div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><span class="trust-icon">◼</span><span class="trust-text">Apple Silicon Native</span></div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><span class="trust-icon">◼</span><span class="trust-text">Near-Zero CPU</span></div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><span class="trust-icon">◼</span><span class="trust-text">Lifetime License</span></div>
+  <div class="trust-sep"></div>
+  <div class="trust-item"><span class="trust-icon">◼</span><span class="trust-text">No Dongle Required</span></div>
+</div>
+
+<div class="divider"></div>
+
+<section id="story">
+  <span class="kicker reveal">Origin</span>
+  <h2 class="headline reveal">Built in the Room.</h2>
+  <div class="story-block reveal">
+    <div class="story-ident">
+      <a href="https://www.createmusicgroup.com" target="_blank" class="story-org">Create<br>Music<br>Group</a>
+      <div class="story-divline"></div>
+      <span class="story-dept">Create Music Studios<br>Los Angeles, CA</span>
+    </div>
+    <div class="story-body">
+      <p class="story-copy">123 wasn't designed in a vacuum. It came out of real sessions — the kind where the mix is almost there and you're reaching for something that doesn't exist on a plugin shelf yet. The engineering team at <a href="https://www.createmusicgroup.com" target="_blank">Create Music Group</a> and <a href="https://www.instagram.com/createmusicstudios/" target="_blank">Create Music Studios</a> built it because they needed it.</p>
+      <p class="story-copy">The idea was simple: stop treating imaging and tone as separate problems. One tool. No menu diving. The result is something that behaves differently depending on what you run through it — because it's reacting to your track, not applying a preset to it.</p>
+      <p class="story-copy">Built for our sessions. Released for yours.</p>
+      <span class="story-tag">CMSP · Create Music Studios · 2026</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="features">
+  <span class="kicker reveal">What it does</span>
+  <h2 class="headline reveal">Three Buttons. One Decision.</h2>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <span class="feature-icon">∿</span>
+      <span class="feature-name">Harmonic Color</span>
+      <p class="feature-body">Adds harmonic content to your signal — affecting tone, image, and perceived weight. Three modes. Infinite outcomes.</p>
+    </div>
+    <div class="feature-card reveal">
+      <span class="feature-icon">◼</span>
+      <span class="feature-name">No Parameters</span>
+      <p class="feature-body">No input gain, no output gain, no mix knob. Load it, cycle through I, II, and III, and trust your ears. There's nothing to get lost in.</p>
+    </div>
+    <div class="feature-card reveal">
+      <span class="feature-icon">⚡</span>
+      <span class="feature-name">Near-Zero CPU</span>
+      <p class="feature-body">Stack it on every channel, every bus. It won't touch your session performance.</p>
+    </div>
+  </div>
+</section>
+
+<div class="loss-strip reveal">
+  <div class="loss-inner">
+    <span class="loss-icon">→</span>
+    <span class="loss-text">Three modes. <strong>Trust your ears. Pick the one that serves the mix.</strong></span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<section id="demo">
+  <span class="kicker reveal">Hear It</span>
+  <h2 class="headline reveal">Before. After.</h2>
+  <div class="demo-player reveal">
+    <div class="demo-inner">
+      <div class="demo-header">
+        <span class="demo-title">123 — Audio Demo</span>
+      </div>
+      <div class="demo-sources">
+        <button class="demo-src-btn active" onclick="selectSource('mb')">Mix Bus</button>
+        <button class="demo-src-btn" onclick="selectSource('vox')">Vocals</button>
+        <button class="demo-src-btn" onclick="selectSource('syn')">Synth</button>
+        <button class="demo-src-btn" onclick="selectSource('beat')">Beat</button>
+      </div>
+      <div class="demo-mode-row">
+        <span class="demo-mode-label">Mode</span>
+        <div class="demo-mode-btns">
+          <button class="demo-mode-btn bypass active" id="dmb-bypass" onclick="selectMode('bypass')">BYP</button>
+          <button class="demo-mode-btn" id="dmb-1" onclick="selectMode('1')">I</button>
+          <button class="demo-mode-btn" id="dmb-2" onclick="selectMode('2')">II</button>
+          <button class="demo-mode-btn" id="dmb-3" onclick="selectMode('3')">III</button>
+        </div>
+      </div>
+      <div class="demo-waveform" id="demo-waveform" onclick="seekClick(event)">
+        <canvas id="waveform-canvas"></canvas>
+        <div class="demo-progress-overlay" id="demo-progress"></div>
+      </div>
+      <div class="demo-controls">
+        <button class="demo-play" id="demo-play-btn" onclick="togglePlay()">
+          <svg viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+        </button>
+        <span class="demo-time" id="demo-time">0:00 / 0:00</span>
+        <input type="range" class="demo-seek" id="demo-seek" min="0" max="100" value="0" step="0.1" oninput="seekTo(this.value)" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="reviews">
+  <span class="kicker reveal">From the Community</span>
+  <h2 class="headline reveal">What Engineers Are Saying.</h2>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="review-stars"><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span></div>
+      <p class="review-quote">You hack me?? Is it a plugin to f*ck with people? Love it</p>
+      <div class="review-meta"><span class="review-name">David Davis</span><span class="review-role">(Miguel, The War On Drugs, Hamish Anderson)</span></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars"><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span></div>
+      <p class="review-quote">Dude this thing is super fun</p>
+      <div class="review-meta"><span class="review-name">Seth Munson</span><span class="review-role">(Teddy Swims, Nickelback, Lakeview)</span></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars"><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span></div>
+      <p class="review-quote">Easy to use, you must trust your ears. Set it and forget it.</p>
+      <div class="review-meta"><span class="review-name">Jonathan Mireles</span><span class="review-role">(MGK, CHANMINA, Ear Ringers)</span></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars"><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span></div>
+      <p class="review-quote">Sometimes, you wanna let the process surprise you. I love I II III because it reveals 3 audio paths to go through. III on drums today? I on vocals and II in the mix bus? It keeps me inspired, new, and out of plugin rot.</p>
+      <div class="review-meta"><span class="review-name">Jorge Lanzas</span><span class="review-role">(The Kooks, CHXNDLER, The Black Moods)</span></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars"><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span></div>
+      <p class="review-quote">Simple, intuitive, and effective. You don't always need fifty knobs to get the right sound. With this, you just click a button and it sounds better. Period. We need more developers moving in this direction.</p>
+      <div class="review-meta"><span class="review-name">Shane Thompson</span><span class="review-role">(Soulidified, Thomas Austin, DC3)</span></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars"><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span><span class="review-star">★</span></div>
+      <p class="review-quote">There have been lots of hyped mixbus plugins lately that sound neat but anything notable stops there. 123 lends itself to so many genres and styles seamlessly, truly making everything sound finished. BEWARE THE SECRET MODE</p>
+      <div class="review-meta"><span class="review-name">Robin Vargas</span><span class="review-role">(Mar Loroña, Nîkihk, Women Who Dig)</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="requirements">
+  <span class="kicker reveal">Compatibility</span>
+  <h2 class="headline reveal">System Requirements.</h2>
+  <div class="req-grid">
+    <div class="req-block reveal">
+      <span class="req-label">macOS</span>
+      <ul class="req-list">
+        <li>10.13 High Sierra or later</li>
+        <li>Apple Silicon native</li>
+        <li>Intel 64-bit supported</li>
+      </ul>
+    </div>
+    <div class="req-block reveal">
+      <span class="req-label">Formats</span>
+      <ul class="req-list">
+        <li>VST3</li>
+        <li>Audio Unit (AU)</li>
+        <li>AAX — Pro Tools</li>
+      </ul>
+    </div>
+    <div class="req-block reveal">
+      <span class="req-label">Licensing</span>
+      <ul class="req-list">
+        <li>iLok account required</li>
+        <li>No physical dongle</li>
+        <li>Delivered post-purchase</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="faq">
+  <span class="kicker reveal">Support</span>
+  <h2 class="headline reveal">Questions.</h2>
+  <div class="faq-list">
+    <details class="reveal">
+      <summary>What does it actually do to my sound?</summary>
+      <p class="faq-answer">It adds harmonic content in a way that affects color, image, and perceived weight — inspired by hardware harmonic processing. It's not a saturator or a traditional exciter. The character it adds is shaped by what you run through it. Throw it on something and cycle through the three modes. Trust your ears. Pick the one that serves the mix.</p>
+    </details>
+    <details class="reveal">
+      <summary>How am I supposed to use it?</summary>
+      <p class="faq-answer">Load it, pick a mode, and move on. No knobs to set, no drive to dial in. It's a quick decision — I, II, or III. If none of those are hitting, hold Shift and click any button to engage a fourth mode. That's the whole workflow.</p>
+    </details>
+    <details class="reveal">
+      <summary>Do I need an iLok dongle?</summary>
+      <p class="faq-answer">A free iLok account is all you need. Once purchased, your license can be stored locally on your computer via iLok License Manager — no dongle required.</p>
+    </details>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="buy">
+  <div class="buy-card reveal">
+    <span class="buy-label">Full License — macOS</span>
+    <div class="buy-price-group">
+      <span class="buy-price">$24.99</span>
+      <span class="buy-was">Regular price $123.00</span>
+    </div>
+    <span class="buy-badge">Launch Price · Save 80%</span>
+    <ul class="buy-includes">
+      <li>VST3, AU &amp; AAX</li>
+      <li>macOS — Apple Silicon &amp; Intel</li>
+      <li>iLok — no dongle required</li>
+      <li>Lifetime license · Free updates</li>
+    </ul>
+    <p class="buy-close">Your next mix is closer than you think. One button is all it takes.</p>
+    <a id="buy-btn-footer" href="https://buy.stripe.com/7sY6oG7VMaKQb71dlXc3m00" class="btn-buy-large" target="_blank">Purchase Now — $24.99</a>
+    <p class="buy-fine">License details included in your purchase confirmation</p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">CMSP · 123</div>
+  <div class="footer-copy">© 2026 Create Music Group · All rights reserved</div>
+</footer>
+
+<script>
+  const heroBtns = document.querySelectorAll('#mockup-modes .mode-btn');
+  function setMode(i) { heroBtns.forEach((b, idx) => b.classList.toggle('active', idx === i)); }
+  let m = 0;
+  setInterval(() => { m = (m + 1) % 3; setMode(m); }, 2200);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -28px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  const BASE = 'https://cmspaudio.com/audio/';
+  const SOURCES = {
+    mb:   { files: { bypass: '123DEMO_MB_BP.mp3',   '1': '123DEMO_MB_I.mp3',   '2': '123DEMO_MB_II.mp3',   '3': '123DEMO_MB_III.mp3'   } },
+    vox:  { files: { bypass: '123DEMO_VOX_BP.mp3',  '1': '123DEMO_VOX_I.mp3',  '2': '123DEMO_VOX_II.mp3',  '3': '123DEMO_VOX_III.mp3'  } },
+    syn:  { files: { bypass: '123DEMO_SYN_BP.mp3',  '1': '123DEMO_SYN_I.mp3',  '2': '123DEMO_SYN_II.mp3',  '3': '123DEMO_SYN_III.mp3'  } },
+    beat: { files: { bypass: '123DEMO_BEAT_BP.mp3', '1': '123DEMO_BEAT_I.mp3', '2': '123DEMO_BEAT_II.mp3', '3': '123DEMO_BEAT_III.mp3' } },
+  };
+
+  let audio = new Audio(); audio.preload = 'metadata';
+  let curSrc = 'mb', curMode = 'bypass', isPlaying = false, savedTime = 0, animFrame;
+
+  const canvas = document.getElementById('waveform-canvas');
+  const ctx2d  = canvas.getContext('2d');
+  const progEl = document.getElementById('demo-progress');
+  const seekEl = document.getElementById('demo-seek');
+  const timeEl = document.getElementById('demo-time');
+  const playBtn = document.getElementById('demo-play-btn');
+
+  const MODE_KEYS = ['bypass','1','2','3'];
+  const MODE_IDS  = { bypass:'dmb-bypass','1':'dmb-1','2':'dmb-2','3':'dmb-3' };
+  const SRC_KEYS  = ['mb','vox','syn','beat'];
+
+  function drawWaveform(p) {
+    const W = canvas.offsetWidth||880, H = canvas.offsetHeight||64;
+    canvas.width = W; canvas.height = H; ctx2d.clearRect(0,0,W,H);
+    const bars=110, seed=SRC_KEYS.indexOf(curSrc)*97+MODE_KEYS.indexOf(curMode)*31, bw=W/bars-1;
+    for (let i=0;i<bars;i++) {
+      const r=Math.sin((i+seed)*2.3+seed)*0.5+0.5, r2=Math.sin((i+seed)*5.7+seed*0.3)*0.25+0.25;
+      const h=(r*0.55+r2*0.35+0.1)*H*0.88, x=i*(bw+1);
+      ctx2d.fillStyle=(i/bars)<=p?'rgba(92,232,122,0.72)':'rgba(92,232,122,0.13)';
+      ctx2d.fillRect(x,(H-h)/2,bw,h);
+    }
+  }
+
+  function fmt(s) { if(!s||isNaN(s))return'0:00'; return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
+
+  function updateUI() {
+    const p=audio.duration?audio.currentTime/audio.duration:0;
+    progEl.style.width=(p*100)+'%'; seekEl.value=p*100;
+    timeEl.textContent=fmt(audio.currentTime)+' / '+fmt(audio.duration);
+    drawWaveform(p); if(isPlaying) animFrame=requestAnimationFrame(updateUI);
+  }
+
+  function setPlayIcon(pl) {
+    playBtn.innerHTML=pl
+      ?'<svg viewBox="0 0 10 12" style="width:12px;height:12px;fill:var(--green)"><rect x="0" y="0" width="3.5" height="12"/><rect x="6.5" y="0" width="3.5" height="12"/></svg>'
+      :'<svg viewBox="0 0 10 12" style="width:12px;height:12px;fill:var(--green)"><polygon points="0,0 10,6 0,12"/></svg>';
+  }
+
+  function loadTrack(resume) {
+    audio.src=BASE+SOURCES[curSrc].files[curMode]; audio.load();
+    audio.addEventListener('loadedmetadata',()=>{
+      if(resume&&savedTime>0&&savedTime<audio.duration) audio.currentTime=savedTime;
+      timeEl.textContent=fmt(audio.currentTime)+' / '+fmt(audio.duration);
+      drawWaveform(audio.duration?audio.currentTime/audio.duration:0);
+      if(resume&&isPlaying) audio.play().then(()=>{setPlayIcon(true);animFrame=requestAnimationFrame(updateUI);}).catch(()=>{});
+    },{once:true});
+  }
+
+  function togglePlay() {
+    if(isPlaying){audio.pause();isPlaying=false;cancelAnimationFrame(animFrame);setPlayIcon(false);}
+    else{audio.play().then(()=>{isPlaying=true;setPlayIcon(true);animFrame=requestAnimationFrame(updateUI);}).catch(()=>{});}
+  }
+
+  function seekTo(v) { if(audio.duration){audio.currentTime=(v/100)*audio.duration;if(!isPlaying)updateUI();} }
+
+  function seekClick(e) {
+    const r=e.currentTarget.getBoundingClientRect(), ratio=(e.clientX-r.left)/r.width;
+    if(audio.duration){audio.currentTime=ratio*audio.duration;if(!isPlaying)updateUI();}
+  }
+
+  function selectMode(mode) {
+    savedTime=audio.currentTime||0; const was=isPlaying;
+    if(isPlaying){audio.pause();cancelAnimationFrame(animFrame);isPlaying=false;}
+    curMode=mode;
+    MODE_KEYS.forEach(k=>document.getElementById(MODE_IDS[k]).classList.toggle('active',k===mode));
+    progEl.style.width='0%';seekEl.value=0;timeEl.textContent='0:00 / 0:00';setPlayIcon(false);drawWaveform(0);
+    isPlaying=was; loadTrack(true);
+  }
+
+  function selectSource(src) {
+    savedTime=0; const was=isPlaying;
+    if(isPlaying){audio.pause();cancelAnimationFrame(animFrame);isPlaying=false;}
+    curSrc=src;
+    document.querySelectorAll('.demo-src-btn').forEach((b,i)=>b.classList.toggle('active',SRC_KEYS[i]===src));
+    progEl.style.width='0%';seekEl.value=0;timeEl.textContent='0:00 / 0:00';setPlayIcon(false);drawWaveform(0);
+    isPlaying=was; loadTrack(false);
+  }
+
+  audio.addEventListener('ended',()=>{isPlaying=false;cancelAnimationFrame(animFrame);setPlayIcon(false);drawWaveform(1);});
+
+  loadTrack(false); drawWaveform(0);
+  window.addEventListener('resize',()=>drawWaveform(audio.duration?audio.currentTime/audio.duration:0));
+</script>
+
+</body>
+</html>

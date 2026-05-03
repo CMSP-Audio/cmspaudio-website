@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Thanks — CMSP123</title>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W92GJ283');</script>
+<!-- End Google Tag Manager -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Jost:wght@300;400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green:      #5CE87A;
+    --green-glow: rgba(92,232,122,0.22);
+    --green-deep: #3fad58;
+    --bg:         #111412;
+    --bg-card:    #151815;
+    --text:       #8aab90;
+    --text-dim:   #3d5242;
+    --border:     #1e2620;
+    --max-w:      720px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Jost', sans-serif; font-weight: 300;
+    line-height: 1.7; overflow-x: hidden;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none; z-index: 9999;
+  }
+  body::after {
+    content: ''; position: fixed; top: -180px; left: 50%; transform: translateX(-50%);
+    width: 900px; height: 460px;
+    background: radial-gradient(ellipse, rgba(92,232,122,0.09) 0%, transparent 68%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(17,20,18,0.92); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 0.22em; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .nav-logo:hover { color: var(--green); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.18em; color: var(--text-dim); text-decoration: none; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--green); }
+
+  /* HERO */
+  .ty-hero {
+    min-height: 70vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 140px 24px 60px; position: relative; z-index: 1;
+  }
+  .ty-kicker {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    letter-spacing: 0.32em; color: var(--green-deep); text-transform: uppercase;
+    margin-bottom: 22px; opacity: 0; animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+  .ty-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 14vw, 180px);
+    letter-spacing: 0.04em; line-height: 0.88; color: var(--green);
+    text-shadow: 0 0 60px rgba(92,232,122,0.28), 0 0 120px rgba(92,232,122,0.08);
+    margin-bottom: 18px; opacity: 0; animation: fadeUp 0.8s ease 0.22s forwards;
+  }
+  .ty-sub {
+    font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    letter-spacing: 0.24em; color: var(--text); text-transform: uppercase;
+    opacity: 0; animation: fadeUp 0.7s ease 0.42s forwards;
+  }
+
+  /* SECTIONS */
+  section { max-width: var(--max-w); width: 100%; margin: 0 auto; padding: 56px 40px; position: relative; z-index: 1; }
+  .kicker { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.28em; color: var(--green-deep); text-transform: uppercase; margin-bottom: 10px; display: block; }
+  .headline { font-family: 'Bebas Neue', sans-serif; font-size: clamp(28px, 4vw, 42px); letter-spacing: 0.05em; color: var(--text); line-height: 1; margin-bottom: 28px; }
+
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border) 25%, var(--border) 75%, transparent); max-width: var(--max-w); margin: 0 auto; }
+
+  /* STEPS */
+  .steps { display: flex; flex-direction: column; gap: 2px; }
+  .step { background: var(--bg-card); border: 1px solid var(--border); padding: 22px 24px; display: flex; gap: 22px; align-items: flex-start; transition: border-color 0.2s, background 0.2s; }
+  .step:hover { border-color: #2a4030; background: #181d18; }
+  .step-num { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--green-deep); flex-shrink: 0; padding-top: 2px; }
+  .step-body { font-size: 14px; color: var(--text-dim); line-height: 1.75; font-weight: 300; }
+  .step-body strong { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--text); text-transform: uppercase; font-weight: 400; display: block; margin-bottom: 6px; }
+
+  /* SUPPORT */
+  .support-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-left: 2px solid var(--green-deep);
+    padding: 24px 28px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .support-text { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.14em; color: var(--text-dim); text-transform: uppercase; }
+  .support-email {
+    font-family: 'Share Tech Mono', monospace; font-size: 16px; letter-spacing: 0.08em;
+    color: var(--green); text-decoration: none; transition: color 0.2s;
+  }
+  .support-email:hover { color: #7af09a; text-decoration: underline; }
+
+  /* SHARE */
+  .share-section { text-align: center; }
+  .btn-ig {
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    font-family: 'Share Tech Mono', monospace; font-size: 13px; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--bg); background: var(--green);
+    padding: 18px 46px; text-decoration: none;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 0 28px var(--green-glow);
+  }
+  .btn-ig:hover { background: #7af09a; transform: translateY(-1px); box-shadow: 0 0 44px rgba(92,232,122,0.42); }
+  .btn-ig .share-ico { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+  .share-secondary { margin-top: 22px; }
+  .share-x-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--text-dim); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .share-x-link:hover { color: var(--green); }
+  .share-x-link .share-ico { width: 11px; height: 11px; fill: currentColor; flex-shrink: 0; }
+
+  /* BACK CTA */
+  .ty-back { text-align: center; padding-top: 20px; padding-bottom: 80px; }
+  .btn-home {
+    font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--bg); background: var(--green);
+    padding: 13px 38px; text-decoration: none; display: inline-block;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 0 22px var(--green-glow);
+  }
+  .btn-home:hover { background: #7af09a; transform: translateY(-1px); box-shadow: 0 0 36px rgba(92,232,122,0.38); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; margin-top: auto; }
+  .footer-logo { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--text-dim); opacity: 0.5; }
+  .footer-copy { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--text-dim); opacity: 0.25; text-transform: uppercase; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 700px) {
+    nav { padding: 14px 20px; }
+    .nav-links { gap: 14px; }
+    .nav-links a { font-size: 9px; letter-spacing: 0.14em; }
+    .ty-hero { padding: 120px 20px 40px; min-height: 60vh; }
+    section { padding: 44px 24px; }
+    .step { padding: 20px 20px; gap: 16px; }
+    .support-card { padding: 20px 22px; }
+    .share-btns { flex-direction: column; }
+    .share-btn { flex: 1 1 auto; }
+    footer { flex-direction: column; gap: 10px; text-align: center; padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W92GJ283"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<nav>
+  <a href="/" class="nav-logo">CMSP123</a>
+  <ul class="nav-links">
+    <li><a href="/#story">Origin</a></li>
+    <li><a href="/#features">Features</a></li>
+    <li><a href="/#demo">Demo</a></li>
+    <li><a href="/#reviews">Reviews</a></li>
+    <li><a href="/#faq">FAQ</a></li>
+  </ul>
+</nav>
+
+<div class="ty-hero">
+  <span class="ty-kicker">Order confirmed</span>
+  <h1 class="ty-title">Thank You.</h1>
+  <p class="ty-sub">You're in.</p>
+</div>
+
+<div class="divider"></div>
+
+<section>
+  <span class="kicker">What happens next</span>
+  <h2 class="headline">Your Download.</h2>
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">01</span>
+      <div class="step-body">
+        <strong>Check your email.</strong>
+        Your download link and iLok activation details are on the way. They should arrive within 5 minutes.
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">02</span>
+      <div class="step-body">
+        <strong>Don't see it?</strong>
+        Check your spam folder. If it's still missing, reach out below and we'll get you sorted.
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">03</span>
+      <div class="step-body">
+        <strong>Install and go.</strong>
+        Load it, pick a mode, trust your ears.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section>
+  <span class="kicker">Support</span>
+  <h2 class="headline">Questions?</h2>
+  <div class="support-card">
+    <span class="support-text">Any issues — we're on it. Email:</span>
+    <a class="support-email" href="mailto:studios@createmusicgroup.com">studios@createmusicgroup.com</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="share-section">
+  <span class="kicker">Stay connected</span>
+  <h2 class="headline">Follow the signal.</h2>
+  <a class="btn-ig" href="https://www.instagram.com/createmusicstudios/" target="_blank" rel="noopener noreferrer">
+    <svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.848s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.645.07-4.85.07-3.204 0-3.584-.012-4.85-.07-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608.975-.975 2.242-1.249 3.608-1.311C8.416 2.175 8.796 2.163 12 2.163Zm0 5.837A4 4 0 1 0 12 16a4 4 0 0 0 0-8Zm0 1.8a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4ZM16.95 6.55a.95.95 0 1 0 0 1.9.95.95 0 0 0 0-1.9Z"/></svg>
+    Follow on Instagram
+  </a>
+  <div class="share-secondary">
+    <a class="share-x-link" href="https://x.com/intent/post?text=Added%20123%20to%20the%20chain.%20One%20knob%2C%20three%20modes.%20https%3A%2F%2Fcmspaudio.com" target="_blank" rel="noopener noreferrer">
+      <svg class="share-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2H21.5l-7.5 8.573L23 22h-6.93l-5.427-7.086L4.333 22H1.075l8.03-9.177L1 2h7.105l4.9 6.479L18.244 2Zm-1.217 18.25h1.9L6.063 3.648H4.03L17.027 20.25Z"/></svg>
+      Post on X
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="ty-back">
+  <a href="/" class="btn-home">Back to 123</a>
+</section>
+
+<footer>
+  <span class="footer-logo">CMSP · 123</span>
+  <span class="footer-copy">© 2026 Create Music Group · All rights reserved</span>
+</footer>
+
+<!-- GA4 purchase event — fires only after Stripe server-side verification -->
+<script>
+  (function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var sessionId = urlParams.get('session_id');
+    if (!sessionId) return;
+
+    fetch('/.netlify/functions/verify-purchase?session_id=' + encodeURIComponent(sessionId))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.valid && typeof gtag === 'function') {
+          gtag('event', 'purchase', {
+            transaction_id: data.transaction_id,
+            value: data.value,
+            currency: data.currency,
+            items: data.items
+          });
+        }
+      })
+      .catch(function(err) { console.error('Purchase verification failed:', err); });
+  })();
+</script>
+
+</body>
+</html>
